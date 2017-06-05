@@ -3,17 +3,15 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"strconv"
 	"strings"
-	"syscall"
 
+	"github.com/0xAwn/dissident/coffer"
+	"github.com/0xAwn/dissident/crypto"
+	"github.com/0xAwn/dissident/data"
+	"github.com/0xAwn/dissident/stdin"
+	"github.com/0xAwn/memguard"
 	"github.com/cheggaaa/pb"
-	"github.com/libeclipse/dissident/coffer"
-	"github.com/libeclipse/dissident/crypto"
-	"github.com/libeclipse/dissident/data"
-	"github.com/libeclipse/dissident/memory"
-	"github.com/libeclipse/dissident/stdin"
 )
 
 var (
@@ -21,7 +19,7 @@ var (
 	scryptCost = map[string]int{"N": 18, "r": 16, "p": 1}
 
 	// Store the container ID globally.
-	masterPassword []byte
+	masterPassword *memguard.LockedBuffer
 )
 
 func main() {
@@ -33,22 +31,15 @@ func main() {
 	}
 	defer coffer.Close()
 
-	// CleanupMemory in case of Ctrl+C
-	c := make(chan os.Signal, 2)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-c
-		memory.SafeExit(0)
-	}()
+	// Cleanup memory when exiting.
+	memguard.CatchInterrupt(func() {})
+	defer memguard.DestroyAll()
 
 	// Launch CLI.
 	err = cli()
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	// Zero out and unlock any protected memory.
-	memory.Cleanup()
 }
 
 func cli() error {

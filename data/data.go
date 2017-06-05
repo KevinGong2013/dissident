@@ -6,14 +6,14 @@ import (
 	"math"
 	"os"
 
+	"github.com/0xAwn/dissident/coffer"
+	"github.com/0xAwn/dissident/crypto"
+	"github.com/0xAwn/memguard"
 	"github.com/cheggaaa/pb"
-	"github.com/libeclipse/dissident/coffer"
-	"github.com/libeclipse/dissident/crypto"
-	"github.com/libeclipse/dissident/memory"
 )
 
 // ImportData reads a file from the disk and imports it.
-func ImportData(path string, fileSize int64, rootIdentifier []byte, masterKey *[32]byte) {
+func ImportData(path string, fileSize int64, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Open the file.
 	f, err := os.Open(path)
 	if err != nil {
@@ -55,11 +55,11 @@ func ImportData(path string, fileSize int64, rootIdentifier []byte, masterKey *[
 			fmt.Println(err)
 			return
 		}
-		memory.Wipe(buffer)
+		memguard.WipeBytes(buffer)
 
 		// Save it and wipe plaintext.
 		coffer.Save(crypto.DeriveIdentifierN(rootIdentifier, chunkIndex), crypto.Encrypt(data, masterKey))
-		memory.Wipe(data)
+		memguard.WipeBytes(data)
 
 		// Increment counter.
 		chunkIndex++
@@ -69,7 +69,7 @@ func ImportData(path string, fileSize int64, rootIdentifier []byte, masterKey *[
 }
 
 // ExportData exports data from coffer to the disk.
-func ExportData(path string, rootIdentifier []byte, masterKey *[32]byte) {
+func ExportData(path string, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Atempt to open the file now.
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND|os.O_CREATE|os.O_EXCL, 0666)
 	if err != nil {
@@ -116,11 +116,11 @@ func ExportData(path string, rootIdentifier []byte, masterKey *[32]byte) {
 			return
 		}
 		bar.Add(len(unpadded)) // Increment the progress bar.
-		memory.Wipe(pt)
+		memguard.WipeBytes(pt)
 
 		// Write and wipe data.
 		f.Write(unpadded)
-		memory.Wipe(unpadded)
+		memguard.WipeBytes(unpadded)
 	}
 	// We're done. End the progress bar.
 	bar.FinishPrint(fmt.Sprintf("+ Saved to %s", path))
@@ -132,7 +132,7 @@ func ExportData(path string, rootIdentifier []byte, masterKey *[32]byte) {
 }
 
 // ViewData grabs the data from coffer and writes it to stdout.
-func ViewData(rootIdentifier []byte, masterKey *[32]byte) {
+func ViewData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Get the metadata first.
 	lenData := MetaGetLength("length", rootIdentifier, masterKey)
 
@@ -161,11 +161,11 @@ func ViewData(rootIdentifier []byte, masterKey *[32]byte) {
 			return
 		}
 		totalExportedBytes += int64(len(unpadded))
-		memory.Wipe(pt)
+		memguard.WipeBytes(pt)
 
 		// Write and wipe data.
 		fmt.Print(string(unpadded))
-		memory.Wipe(unpadded)
+		memguard.WipeBytes(unpadded)
 	}
 
 	fmt.Println("-----END PLAINTEXT-----")
@@ -177,7 +177,7 @@ func ViewData(rootIdentifier []byte, masterKey *[32]byte) {
 }
 
 // RemoveData removes data from coffer.
-func RemoveData(rootIdentifier []byte, masterKey *[32]byte) {
+func RemoveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Get the metadata first.
 	lenData := MetaGetLength("length", rootIdentifier, masterKey)
 

@@ -3,10 +3,10 @@ package data
 import (
 	"fmt"
 
+	"github.com/0xAwn/dissident/coffer"
+	"github.com/0xAwn/dissident/crypto"
+	"github.com/0xAwn/memguard"
 	"github.com/Jeffail/gabs"
-	"github.com/libeclipse/dissident/coffer"
-	"github.com/libeclipse/dissident/crypto"
-	"github.com/libeclipse/dissident/memory"
 )
 
 var (
@@ -14,14 +14,14 @@ var (
 )
 
 // MetaSetLength sets the length field of an entry to the supplied value.
-func MetaSetLength(length int64, rootIdentifier []byte, masterKey *[32]byte) {
+func MetaSetLength(length int64, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	metaObj = gabs.New()
 	metaObj.SetP(length, "length")
 	MetaSaveData(rootIdentifier, masterKey)
 }
 
 // MetaGetLength retrieves the length of this data and returns it.
-func MetaGetLength(path string, rootIdentifier []byte, masterKey *[32]byte) int64 {
+func MetaGetLength(path string, rootIdentifier, masterKey *memguard.LockedBuffer) int64 {
 	metaObj = gabs.New()
 
 	MetaRetrieveData(rootIdentifier, masterKey)
@@ -29,14 +29,14 @@ func MetaGetLength(path string, rootIdentifier []byte, masterKey *[32]byte) int6
 	value := metaObj.Path(path).Data()
 	if value == nil {
 		fmt.Println("! No length field found; was importing interrupted?")
-		memory.SafeExit(1)
+		memguard.SafeExit(1)
 	}
 
 	return int64(value.(float64))
 }
 
 // MetaSaveData saves the metadata to the database.
-func MetaSaveData(rootIdentifier []byte, masterKey *[32]byte) {
+func MetaSaveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Grab the metadata as bytes.
 	data := []byte(metaObj.String())
 
@@ -54,7 +54,7 @@ func MetaSaveData(rootIdentifier []byte, masterKey *[32]byte) {
 		padded, err := crypto.Pad(chunk, 4096)
 		if err != nil {
 			fmt.Println(err)
-			memory.SafeExit(1)
+			memguard.SafeExit(1)
 		}
 
 		// Save it to the database.
@@ -63,7 +63,7 @@ func MetaSaveData(rootIdentifier []byte, masterKey *[32]byte) {
 }
 
 // MetaRetrieveData gets the metadata from the database and returns
-func MetaRetrieveData(rootIdentifier []byte, masterKey *[32]byte) {
+func MetaRetrieveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Declare variable to hold all of this metadata.
 	var data []byte
 
@@ -78,14 +78,14 @@ func MetaRetrieveData(rootIdentifier []byte, masterKey *[32]byte) {
 		pt, err := crypto.Decrypt(ct, masterKey)
 		if err != nil {
 			fmt.Println(err)
-			memory.SafeExit(1)
+			memguard.SafeExit(1)
 		}
 
 		// Unpad this slice.
 		unpadded, e := crypto.Unpad(pt)
 		if e != nil {
 			fmt.Println(e)
-			memory.SafeExit(1)
+			memguard.SafeExit(1)
 		}
 
 		// Append this chunk to the metadata.
@@ -101,7 +101,7 @@ func MetaRetrieveData(rootIdentifier []byte, masterKey *[32]byte) {
 	metadataObj, err := gabs.ParseJSON(data)
 	if err != nil {
 		fmt.Println(err)
-		memory.SafeExit(1)
+		memguard.SafeExit(1)
 	}
 
 	// That went well. Set the global var to that object.
@@ -109,7 +109,7 @@ func MetaRetrieveData(rootIdentifier []byte, masterKey *[32]byte) {
 }
 
 // MetaRemoveData deletes all the metadata related to an entry.
-func MetaRemoveData(rootIdentifier []byte) {
+func MetaRemoveData(rootIdentifier *memguard.LockedBuffer) {
 	for n := -1; true; n-- {
 		// Get the DeriveIdentifierN for this n.
 		derivedMetaIdentifierN := crypto.DeriveMetaIdentifierN(rootIdentifier, n)

@@ -1,12 +1,20 @@
-hash: f9a17475369032c44a1a83c1ce43636e3e03a6ec4f58ba48a765453d3986ecc8
-updated: 2017-04-18T00:14:18.387458712+01:00
+hash: d5c9dd9ffbae51714f3334bd30b7128173521205d995d5042e4e332e100e9579
+updated: 2017-06-05T18:38:55.103864+01:00
 imports:
+- name: github.com/0xAwn/memguard
+  version: 4c4ecbc526cb5a5d7822051b00e082e0a647f89e
+- name: github.com/alexbrainman/winapi
+  version: c959b37223f62e4581a4a58da7816cf962aeb906
 - name: github.com/cheggaaa/pb
-  version: b6229822fa186496fcbf34111237e7a9693c6971
+  version: f6ccf2184de4dd34495277e38dc19b6e7fbe0ea2
 - name: github.com/golang/snappy
   version: 553a641470496b2327abcac10b36396bd98e45c9
 - name: github.com/Jeffail/gabs
   version: 2a3aa15961d5fee6047b8151b67ac2f08ba2c48c
+- name: github.com/libeclipse/memguard
+  version: 4c4ecbc526cb5a5d7822051b00e082e0a647f89e
+  subpackages:
+  - memcall
 - name: github.com/mattn/go-runewidth
   version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
 - name: github.com/syndtr/goleveldb
@@ -35,7 +43,7 @@ imports:
   - scrypt
   - ssh/terminal
 - name: golang.org/x/sys
-  version: d75a52659825e75fff6158388dddc6a5b04f9ba5
+  version: e24f485414aeafb646f6fca458b0bf869c0880a1
   subpackages:
   - unix
   - windows

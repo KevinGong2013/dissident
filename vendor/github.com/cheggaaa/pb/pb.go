@@ -13,7 +13,7 @@ import (
 )
 
 // Current version
-const Version = "1.0.13"
+const Version = "1.0.15"
 
 const (
 	// Default refresh rate - 200ms
@@ -47,7 +47,6 @@ func New64(total int64) *ProgressBar {
 		Units:         U_NO,
 		ManualUpdate:  false,
 		finish:        make(chan struct{}),
-		currentValue:  -1,
 	}
 	return pb.Format(FORMAT)
 }
@@ -90,9 +89,8 @@ type ProgressBar struct {
 	finish     chan struct{}
 	isFinish   bool
 
-	startTime    time.Time
-	startValue   int64
-	currentValue int64
+	startTime  time.Time
+	startValue int64
 
 	prefix, postfix string
 
@@ -415,10 +413,7 @@ func (pb *ProgressBar) GetWidth() int {
 // Write the current state of the progressbar
 func (pb *ProgressBar) Update() {
 	c := atomic.LoadInt64(&pb.current)
-	if pb.AlwaysUpdate || c != pb.currentValue {
-		pb.write(c)
-		pb.currentValue = c
-	}
+	pb.write(c)
 	if pb.AutoStat {
 		if c == 0 {
 			pb.startTime = time.Now()
