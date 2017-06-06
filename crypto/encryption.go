@@ -4,7 +4,7 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/0xAwn/memguard"
+	"github.com/awnumar/memguard"
 	"golang.org/x/crypto/nacl/secretbox"
 )
 

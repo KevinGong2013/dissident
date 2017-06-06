@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 
-	"github.com/0xAwn/memguard"
+	"github.com/awnumar/memguard"
 )
 
 // GenerateRandomBytes generates cryptographically secure random bytes.

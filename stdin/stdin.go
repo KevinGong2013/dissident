@@ -7,7 +7,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/0xAwn/memguard"
+	"github.com/awnumar/memguard"
 
 	"golang.org/x/crypto/ssh/terminal"
 )

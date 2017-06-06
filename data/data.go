@@ -6,9 +6,9 @@ import (
 	"math"
 	"os"
 
-	"github.com/0xAwn/dissident/coffer"
-	"github.com/0xAwn/dissident/crypto"
-	"github.com/0xAwn/memguard"
+	"github.com/awnumar/dissident/coffer"
+	"github.com/awnumar/dissident/crypto"
+	"github.com/awnumar/memguard"
 	"github.com/cheggaaa/pb"
 )
 

@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/0xAwn/dissident/coffer"
-	"github.com/0xAwn/dissident/crypto"
-	"github.com/0xAwn/dissident/data"
-	"github.com/0xAwn/dissident/stdin"
-	"github.com/0xAwn/memguard"
+	"github.com/awnumar/dissident/coffer"
+	"github.com/awnumar/dissident/crypto"
+	"github.com/awnumar/dissident/data"
+	"github.com/awnumar/dissident/stdin"
+	"github.com/awnumar/memguard"
 	"github.com/cheggaaa/pb"
 )
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/0xAwn/memguard"
+	"github.com/awnumar/memguard"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/scrypt"
 )

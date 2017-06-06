@@ -1,12 +1,12 @@
-hash: d5c9dd9ffbae51714f3334bd30b7128173521205d995d5042e4e332e100e9579
-updated: 2017-06-05T19:42:57.242466836+01:00
+hash: 8f86b92966202c5a8f73f73c415fa5afe65b1548791016f67dcfa1ab2b89e102
+updated: 2017-06-06T20:08:21.802673756+01:00
 imports:
-- name: github.com/0xAwn/memguard
-  version: 7fc46a5ed6e4b7290f36a3aac1bc5e3040adee81
-  subpackages:
-  - memcall
 - name: github.com/alexbrainman/winapi
   version: c959b37223f62e4581a4a58da7816cf962aeb906
+- name: github.com/awnumar/memguard
+  version: 6d2f8c1a1f3e93aefae720b5546a1ca1a96f775c
+  subpackages:
+  - memcall
 - name: github.com/cheggaaa/pb
   version: f6ccf2184de4dd34495277e38dc19b6e7fbe0ea2
 - name: github.com/golang/snappy

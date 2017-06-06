@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://cdn.rawgit.com/0xAwn/dissident/master/logo.svg" height="140" />
+  <img src="https://cdn.rawgit.com/awnumar/dissident/master/logo.svg" height="140" />
   <h3 align="center">Dissident (beta)</h3>
   <p align="center">An encryption program that prioritises deniability.</p>
   <p align="center">
-    <a href="https://travis-ci.org/0xAwn/dissident"><img src="https://travis-ci.org/0xAwn/dissident.svg?branch=master"></a>
-    <a href="https://ci.appveyor.com/project/0xAwn/dissident/branch/master"><img src="https://ci.appveyor.com/api/projects/status/9v38wh14fa6klc7v/branch/master?svg=true"></a>
-    <a href="https://dependencyci.com/github/0xAwn/dissident"><img src="https://dependencyci.com/github/0xAwn/dissident/badge"></a>
-    <a href="https://goreportcard.com/report/github.com/0xAwn/dissident"><img src="https://goreportcard.com/badge/github.com/0xAwn/dissident"></a>
+    <a href="https://travis-ci.org/awnumar/dissident"><img src="https://travis-ci.org/awnumar/dissident.svg?branch=master"></a>
+    <a href="https://ci.appveyor.com/project/awnumar/dissident/branch/master"><img src="https://ci.appveyor.com/api/projects/status/9v38wh14fa6klc7v/branch/master?svg=true"></a>
+    <a href="https://dependencyci.com/github/awnumar/dissident"><img src="https://dependencyci.com/github/awnumar/dissident/badge"></a>
+    <a href="https://goreportcard.com/report/github.com/awnumar/dissident"><img src="https://goreportcard.com/badge/github.com/awnumar/dissident"></a>
   </p>
 </p>
 
@@ -43,7 +43,7 @@ The complete protocol can be found [here](PROTOCOL).
 Simply run:
 
 ```
-$ go get github.com/0xAwn/dissident
+$ go get github.com/awnumar/dissident
 ```
 
 This will fetch, compile, and install Dissident automatically. If you have `$GOPATH` in your PATH, you should be able to run it with a simple:
