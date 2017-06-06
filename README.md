@@ -4,7 +4,7 @@
   <p align="center">An encryption program that prioritises deniability.</p>
   <p align="center">
     <a href="https://travis-ci.org/awnumar/dissident"><img src="https://travis-ci.org/awnumar/dissident.svg?branch=master"></a>
-    <a href="https://ci.appveyor.com/project/awnumar/dissident/branch/master"><img src="https://ci.appveyor.com/api/projects/status/9v38wh14fa6klc7v/branch/master?svg=true"></a>
+    <a href="https://ci.appveyor.com/project/awnumar/dissident/branch/master"><img src="https://ci.appveyor.com/api/projects/status/w8ma6o6q1m700wcp/branch/master?svg=true"></a>
     <a href="https://dependencyci.com/github/awnumar/dissident"><img src="https://dependencyci.com/github/awnumar/dissident/badge"></a>
     <a href="https://goreportcard.com/report/github.com/awnumar/dissident"><img src="https://goreportcard.com/badge/github.com/awnumar/dissident"></a>
   </p>
