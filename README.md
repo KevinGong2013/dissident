@@ -1,3 +1,7 @@
+**This project is in beta and unstable. It should not yet be used seriously.**
+
+---
+
 <p align="center">
   <img src="https://cdn.rawgit.com/awnumar/dissident/master/logo.svg" height="140" />
   <h3 align="center">Dissident (beta)</h3>
