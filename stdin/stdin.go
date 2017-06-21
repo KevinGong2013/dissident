@@ -13,7 +13,7 @@ import (
 )
 
 // GetMasterPassword takes the masterPassword from the user while doing all of the verifying stuff.
-func GetMasterPassword() (*memguard.LockedBuffer, error) {
+func GetMasterPassword() *memguard.LockedBuffer {
 	// Prompt user for password and confirmation.
 	masterPassword := Secure("- Master password: ")
 	confirmPassword := Secure("- Confirm password: ")
@@ -29,7 +29,7 @@ func GetMasterPassword() (*memguard.LockedBuffer, error) {
 	// We no longer need this.
 	confirmPassword.Destroy()
 
-	return masterPassword, nil
+	return masterPassword
 }
 
 // Standard reads from stdin while echoing back.
@@ -62,7 +62,7 @@ func Secure(prompt string) *memguard.LockedBuffer {
 	// Secure the input value.
 	input, err := memguard.NewFromBytes(rawinput, false)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\n", err)
 		memguard.SafeExit(1)
 	}
 

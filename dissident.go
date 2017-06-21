@@ -18,7 +18,7 @@ var (
 	// The default cost factor for key deriviation.
 	scryptCost = map[string]int{"N": 18, "r": 16, "p": 1}
 
-	// Store the container ID globally.
+	// Store a global reference to the master password.
 	masterPassword *memguard.LockedBuffer
 )
 
@@ -43,8 +43,6 @@ func main() {
 }
 
 func cli() error {
-	var err error
-
 	help := `import [path] - Import a new file to the database.
 export [path] - Retrieve data from the database and export to a file.
 peak          - Grab data from the database and print it to the screen.
@@ -52,10 +50,7 @@ remove        - Remove some previously stored data from the database.
 decoys        - Add a variable amount of random decoy data.
 exit          - Exit the program.`
 
-	masterPassword, err = stdin.GetMasterPassword()
-	if err != nil {
-		return err
-	}
+	masterPassword = stdin.GetMasterPassword()
 	fmt.Println("") // For formatting.
 
 	for {
@@ -107,10 +102,13 @@ func importFromDisk(path string) {
 
 	// Prompt the user for the identifier.
 	identifier := stdin.Secure("- Secure identifier: ")
+	defer identifier.Destroy()
 
 	// Derive the secure values for this "branch".
 	fmt.Println("+ Generating root key...")
 	masterKey, rootIdentifier := crypto.DeriveSecureValues(masterPassword, identifier, scryptCost)
+	defer masterKey.Destroy()
+	defer rootIdentifier.Destroy()
 
 	// Check if it exists already.
 	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
@@ -133,10 +131,13 @@ func importFromDisk(path string) {
 func exportToDisk(path string) {
 	// Prompt the user for the identifier.
 	identifier := stdin.Secure("- Secure identifier: ")
+	defer identifier.Destroy()
 
 	// Derive the secure values for this "branch".
 	fmt.Println("+ Generating root key...")
 	masterKey, rootIdentifier := crypto.DeriveSecureValues(masterPassword, identifier, scryptCost)
+	defer masterKey.Destroy()
+	defer rootIdentifier.Destroy()
 
 	// Check if this entry exists.
 	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
