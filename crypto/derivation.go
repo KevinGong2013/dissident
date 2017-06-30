@@ -55,6 +55,7 @@ func DeriveIdentifierN(rootIdentifier *memguard.LockedBuffer, n uint64) []byte {
 	hashArg, _ := memguard.New(40, false)
 	hashArg.Copy(rootIdentifier.Buffer)
 	copy(hashArg.Buffer[32:40], byteN)
+	defer hashArg.Destroy()
 
 	// Derive derivedIdentifier.
 	derivedIdentifier := blake2b.Sum256(hashArg.Buffer)

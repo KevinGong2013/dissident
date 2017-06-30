@@ -13,6 +13,7 @@ func GenDecoy() (id, ct []byte) {
 	// Allocate 32 bytes as the key.
 	key, _ := memguard.New(32, false)
 	key.Copy(randomBytes[0:32])
+	defer key.Destroy()
 
 	// Allocate 32 bytes as the identifier.
 	identifier := randomBytes[32:64]
