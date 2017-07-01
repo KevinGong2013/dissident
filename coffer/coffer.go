@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/awnumar/badger"
+	"github.com/dgraph-io/badger"
 )
 
 var (

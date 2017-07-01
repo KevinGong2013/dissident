@@ -1,37 +1,36 @@
 hash: 8f86b92966202c5a8f73f73c415fa5afe65b1548791016f67dcfa1ab2b89e102
-updated: 2017-06-06T20:08:21.802673756+01:00
+updated: 2017-07-01T12:26:12.73922291+01:00
 imports:
 - name: github.com/alexbrainman/winapi
   version: c959b37223f62e4581a4a58da7816cf962aeb906
+- name: github.com/AndreasBriese/bbloom
+  version: 0320de81a58b973b5187098f4815608711c70f3b
 - name: github.com/awnumar/memguard
   version: 6d2f8c1a1f3e93aefae720b5546a1ca1a96f775c
   subpackages:
   - memcall
+- name: github.com/bkaradzic/go-lz4
+  version: 7224d8d8f27ef618c0a95f1ae69dbb0488abc33a
 - name: github.com/cheggaaa/pb
   version: f6ccf2184de4dd34495277e38dc19b6e7fbe0ea2
-- name: github.com/golang/snappy
-  version: 553a641470496b2327abcac10b36396bd98e45c9
+- name: github.com/dgraph-io/badger
+  version: 1c84ab8cd8f3528ff9a68059db2e4fc4d0b4f947
+  subpackages:
+  - skl
+  - table
+  - "y"
 - name: github.com/Jeffail/gabs
   version: 2a3aa15961d5fee6047b8151b67ac2f08ba2c48c
 - name: github.com/mattn/go-runewidth
-  version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
+  version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
+- name: github.com/pkg/errors
+  version: c605e284fe17294bda444b34710735b29d1a9d90
 - name: github.com/syndtr/goleveldb
-  version: 3c5717caf1475fd25964109a0fc640bd150fce43
+  version: 8c81ea47d4c41a385645e133e15510fc6a2a74b4
   subpackages:
   - leveldb
-  - leveldb/cache
-  - leveldb/comparer
-  - leveldb/errors
-  - leveldb/filter
-  - leveldb/iterator
-  - leveldb/journal
-  - leveldb/memdb
-  - leveldb/opt
-  - leveldb/storage
-  - leveldb/table
-  - leveldb/util
 - name: golang.org/x/crypto
-  version: dc137beb6cce2043eb6b5f223ab8bf51c32459f4
+  version: 5ef0053f77724838734b6945dd364d3847e5de1d
   subpackages:
   - blake2b
   - nacl/secretbox
@@ -40,8 +39,14 @@ imports:
   - salsa20/salsa
   - scrypt
   - ssh/terminal
+- name: golang.org/x/net
+  version: 1f9224279e98554b6a6432d4dd998a739f8b2b7c
+  subpackages:
+  - context
+  - internal/timeseries
+  - trace
 - name: golang.org/x/sys
-  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  version: 4ed4d404df456f81e878683a0363ed3013a59003
   subpackages:
   - unix
   - windows
