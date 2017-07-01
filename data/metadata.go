@@ -68,7 +68,7 @@ func MetaRetrieveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 	var data []byte
 
 	for n := -1; true; n-- {
-		ct := coffer.Retrieve(crypto.DeriveMetaIdentifierN(rootIdentifier, n))
+		ct, _ := coffer.Retrieve(crypto.DeriveMetaIdentifierN(rootIdentifier, n))
 		if ct == nil {
 			// This one doesn't exist. //EOF
 			break
@@ -115,7 +115,8 @@ func MetaRemoveData(rootIdentifier *memguard.LockedBuffer) {
 		derivedMetaIdentifierN := crypto.DeriveMetaIdentifierN(rootIdentifier, n)
 
 		// Check if it exists.
-		if coffer.Exists(derivedMetaIdentifierN) {
+		exists, _ := coffer.Exists(derivedMetaIdentifierN)
+		if exists {
 			coffer.Delete(derivedMetaIdentifierN)
 		} else {
 			break

@@ -4,35 +4,42 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/awnumar/badger"
 )
 
 var (
 	// Coffer is a pointer to the database object.
-	Coffer *leveldb.DB
+	Coffer *badger.KV
 )
 
 // Setup sets up the environment.
 func Setup() error {
-	// Ascertain the path to the secret store.
+	// Ascertain the path to the user's home
+	// directory and set the working directory.
 	user, err := user.Current()
 	if err != nil {
 		return err
 	}
+	wDir := user.HomeDir + "/dissident"
 
 	// Check if we've done this before.
-	if _, err = os.Stat(user.HomeDir + "/.dissident"); err != nil {
+	if _, err = os.Stat(wDir); err != nil {
 		// Apparently we haven't.
 
 		// Create a directory to store our stuff in.
-		err = os.Mkdir(user.HomeDir+"/.dissident", 0700)
+		err = os.Mkdir(wDir, 0700)
 		if err != nil {
 			return err
 		}
 	}
 
-	// Open the database file.
-	Coffer, err = leveldb.OpenFile(user.HomeDir+"/.dissident/coffer", nil)
+	// Configure badger.
+	opt := badger.DefaultOptions
+	opt.Dir = wDir
+	opt.ValueDir = wDir
+
+	// Get the KV object.
+	Coffer, err = badger.NewKV(&opt)
 	if err != nil {
 		return err
 	}
@@ -41,33 +48,35 @@ func Setup() error {
 }
 
 // Exists checks if an entry exists and returns true or false.
-func Exists(identifier []byte) bool {
-	_, err := Coffer.Get(identifier, nil)
+func Exists(identifier []byte) (exists bool, err error) {
+	exists, err = Coffer.Exists(identifier)
 	if err != nil {
-		return false
+		return false, err
 	}
-
-	return true
+	return
 }
 
 // Save saves a secret to the database.
-func Save(identifier, ciphertext []byte) {
-	Coffer.Put(identifier, ciphertext, nil)
+func Save(identifier, ciphertext []byte) error {
+	return Coffer.Set(identifier, ciphertext)
 }
 
 // Retrieve retrieves a secret from the database.
-func Retrieve(identifier []byte) []byte {
-	data, _ := Coffer.Get(identifier, nil)
+func Retrieve(identifier []byte) ([]byte, error) {
+	var item badger.KVItem
+	if err := Coffer.Get(identifier, &item); err != nil {
+		return nil, err
+	}
 
-	return data
+	return item.Value(), nil
 }
 
 // Delete deletes an entry from the database.
-func Delete(identifier []byte) {
-	Coffer.Delete(identifier, nil)
+func Delete(identifier []byte) error {
+	return Coffer.Delete(identifier)
 }
 
 // Close closes the database object.
-func Close() {
-	Coffer.Close()
+func Close() error {
+	return Coffer.Close()
 }

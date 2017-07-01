@@ -32,7 +32,9 @@ func main() {
 	defer coffer.Close()
 
 	// Cleanup memory when exiting.
-	memguard.CatchInterrupt(func() {})
+	memguard.CatchInterrupt(func() {
+		coffer.Close()
+	})
 	defer memguard.DestroyAll()
 
 	// Launch CLI.
@@ -112,7 +114,8 @@ func importFromDisk(path string) {
 
 	// Check if it exists already.
 	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
-	if coffer.Exists(derivedIdentifierN) {
+	exists, _ := coffer.Exists(derivedIdentifierN)
+	if exists {
 		fmt.Println("! Cannot overwrite existing entry")
 		return
 	}
@@ -141,7 +144,8 @@ func exportToDisk(path string) {
 
 	// Check if this entry exists.
 	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
-	if !coffer.Exists(derivedIdentifierN) {
+	exists, _ := coffer.Exists(derivedIdentifierN)
+	if !exists {
 		fmt.Println("! This entry does not exist")
 		return
 	}
@@ -160,7 +164,8 @@ func peak() {
 
 	// Check if this entry exists.
 	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
-	if !coffer.Exists(derivedIdentifierN) {
+	exists, _ := coffer.Exists(derivedIdentifierN)
+	if !exists {
 		fmt.Println("! This entry does not exist")
 		return
 	}
@@ -179,7 +184,8 @@ func remove() {
 
 	// Check if this entry exists.
 	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
-	if !coffer.Exists(derivedIdentifierN) {
+	exists, _ := coffer.Exists(derivedIdentifierN)
+	if !exists {
 		fmt.Println("! There is nothing here to remove")
 		return
 	}

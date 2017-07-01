@@ -96,7 +96,7 @@ func ExportData(path string, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Grab the data.
 	for n := new(uint64); true; *n++ {
 		// Derive derived_identifier[n]
-		ct := coffer.Retrieve(crypto.DeriveIdentifierN(rootIdentifier, *n))
+		ct, _ := coffer.Retrieve(crypto.DeriveIdentifierN(rootIdentifier, *n))
 		if ct == nil {
 			// This one doesn't exist. //EOF
 			break
@@ -141,7 +141,7 @@ func ViewData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 	var totalExportedBytes int64
 	for n := new(uint64); true; *n++ {
 		// Derive derived_identifier[n]
-		ct := coffer.Retrieve(crypto.DeriveIdentifierN(rootIdentifier, *n))
+		ct, _ := coffer.Retrieve(crypto.DeriveIdentifierN(rootIdentifier, *n))
 		if ct == nil {
 			// This one doesn't exist. //EOF
 			break
@@ -197,7 +197,8 @@ func RemoveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 		derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, *n)
 
 		// Check if it exists.
-		if coffer.Exists(derivedIdentifierN) {
+		exists, _ := coffer.Exists(derivedIdentifierN)
+		if exists {
 			coffer.Delete(derivedIdentifierN)
 			count++
 		} else {
