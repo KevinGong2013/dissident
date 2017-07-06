@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -95,9 +96,16 @@ func importFromDisk(path string) {
 		return
 	}
 
+	// Ascertain the list of targets to import.
+	var targets []string
 	if info.IsDir() {
-		fmt.Println("! We can't handle directories yet")
-		return
+		visitFile := func(fp string, fo os.FileInfo, e error) error {
+			if !fo.IsDir() {
+				targets = append(targets, fp)
+			}
+			return nil
+		}
+		filepath.Walk(path, visitFile)
 	}
 
 	// Prompt the user for the identifier.
@@ -110,22 +118,18 @@ func importFromDisk(path string) {
 	defer masterKey.Destroy()
 	defer rootIdentifier.Destroy()
 
-	// Check if it exists already.
-	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
-	if coffer.Exists(derivedIdentifierN) {
-		fmt.Println("! Cannot overwrite existing entry")
-		return
+	var n uint64
+	for n = 0; n < uint64(len(targets)); n++ {
+		// Check if it exists already.
+		derivedIdentifier := crypto.DeriveIdentifier(rootIdentifier, n, int64(0))
+		if coffer.Exists(derivedIdentifier) {
+			fmt.Println("! Cannot overwrite existing entry")
+			return
+		}
+
+		// Import this entry from disk.
+		data.ImportData(targets[n], n, rootIdentifier, masterKey)
 	}
-
-	// Add the metadata to coffer.
-	fmt.Println("+ Adding metadata...")
-	data.MetaSetLength(info.Size(), rootIdentifier, masterKey)
-
-	// Import this entry from disk.
-	data.ImportData(path, info.Size(), rootIdentifier, masterKey)
-
-	// Output status message.
-	fmt.Println("+ Imported successfully.")
 }
 
 func exportToDisk(path string) {
@@ -140,14 +144,14 @@ func exportToDisk(path string) {
 	defer rootIdentifier.Destroy()
 
 	// Check if this entry exists.
-	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
+	derivedIdentifierN := crypto.DeriveIdentifier(rootIdentifier, uint64(0), int64(0))
 	if !coffer.Exists(derivedIdentifierN) {
 		fmt.Println("! This entry does not exist")
 		return
 	}
 
 	// Export the entry.
-	data.ExportData(path, rootIdentifier, masterKey)
+	data.ExportData(path, uint64(0), rootIdentifier, masterKey)
 }
 
 func peak() {
@@ -159,14 +163,14 @@ func peak() {
 	masterKey, rootIdentifier := crypto.DeriveSecureValues(masterPassword, identifier, scryptCost)
 
 	// Check if this entry exists.
-	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
+	derivedIdentifierN := crypto.DeriveIdentifier(rootIdentifier, uint64(0), int64(0))
 	if !coffer.Exists(derivedIdentifierN) {
 		fmt.Println("! This entry does not exist")
 		return
 	}
 
 	// It exists, proceed to get data.
-	data.ViewData(rootIdentifier, masterKey)
+	data.ViewData(uint64(0), rootIdentifier, masterKey)
 }
 
 func remove() {
@@ -178,14 +182,14 @@ func remove() {
 	masterKey, rootIdentifier := crypto.DeriveSecureValues(masterPassword, identifier, scryptCost)
 
 	// Check if this entry exists.
-	derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, 0)
+	derivedIdentifierN := crypto.DeriveIdentifier(rootIdentifier, uint64(0), int64(0))
 	if !coffer.Exists(derivedIdentifierN) {
 		fmt.Println("! There is nothing here to remove")
 		return
 	}
 
 	// Remove the data.
-	data.RemoveData(rootIdentifier, masterKey)
+	data.RemoveData(uint64(0), rootIdentifier, masterKey)
 }
 
 func decoys() {

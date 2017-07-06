@@ -1,10 +1,8 @@
-hash: 8f86b92966202c5a8f73f73c415fa5afe65b1548791016f67dcfa1ab2b89e102
-updated: 2017-06-06T20:08:21.802673756+01:00
+hash: 0d0556ee634d2e5274c9c67bb040e67569d26d4d424f25a5edf07ca84c71abdc
+updated: 2017-07-06T20:47:48.96757312+01:00
 imports:
-- name: github.com/alexbrainman/winapi
-  version: c959b37223f62e4581a4a58da7816cf962aeb906
 - name: github.com/awnumar/memguard
-  version: 6d2f8c1a1f3e93aefae720b5546a1ca1a96f775c
+  version: 876381f04013f0a2934ff5e2f044171378614fa2
   subpackages:
   - memcall
 - name: github.com/cheggaaa/pb
@@ -14,9 +12,9 @@ imports:
 - name: github.com/Jeffail/gabs
   version: 2a3aa15961d5fee6047b8151b67ac2f08ba2c48c
 - name: github.com/mattn/go-runewidth
-  version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
+  version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
 - name: github.com/syndtr/goleveldb
-  version: 3c5717caf1475fd25964109a0fc640bd150fce43
+  version: 8c81ea47d4c41a385645e133e15510fc6a2a74b4
   subpackages:
   - leveldb
   - leveldb/cache
@@ -31,7 +29,7 @@ imports:
   - leveldb/table
   - leveldb/util
 - name: golang.org/x/crypto
-  version: dc137beb6cce2043eb6b5f223ab8bf51c32459f4
+  version: a48ac81e47fd6f9ed1258f3b60ae9e75f93cb7ed
   subpackages:
   - blake2b
   - nacl/secretbox
@@ -41,7 +39,7 @@ imports:
   - scrypt
   - ssh/terminal
 - name: golang.org/x/sys
-  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  version: 6faef541c73732f438fb660a212750a9ba9f9362
   subpackages:
   - unix
   - windows

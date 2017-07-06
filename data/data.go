@@ -13,7 +13,15 @@ import (
 )
 
 // ImportData reads a file from the disk and imports it.
-func ImportData(path string, fileSize int64, rootIdentifier, masterKey *memguard.LockedBuffer) {
+func ImportData(path string, fileIndex uint64, rootIdentifier, masterKey *memguard.LockedBuffer) {
+	// Get file info.
+	info, err := os.Stat(path)
+	if err != nil {
+		fmt.Println(err)
+		memguard.SafeExit(1)
+	}
+	fileSize := info.Size()
+
 	// Open the file.
 	f, err := os.Open(path)
 	if err != nil {
@@ -26,14 +34,18 @@ func ImportData(path string, fileSize int64, rootIdentifier, masterKey *memguard
 	}
 	defer f.Close()
 
+	// Add the metadata to coffer.
+	MetaSetLength(fileSize, rootIdentifier, masterKey, fileIndex)
+
 	// Start the progress bar.
-	bar := pb.New64(fileSize).Prefix("+ Importing ")
+	fmt.Println("+ Importing " + path)
+	bar := pb.New64(fileSize)
 	bar.ShowSpeed = true
 	bar.SetUnits(pb.U_BYTES)
 	bar.Start()
 
 	// Import the data.
-	var chunkIndex uint64
+	var chunkIndex int64
 	buffer := make([]byte, 4095)
 	for {
 		b, err := f.Read(buffer)
@@ -58,7 +70,7 @@ func ImportData(path string, fileSize int64, rootIdentifier, masterKey *memguard
 		memguard.WipeBytes(buffer)
 
 		// Save it and wipe plaintext.
-		coffer.Save(crypto.DeriveIdentifierN(rootIdentifier, chunkIndex), crypto.Encrypt(data, masterKey))
+		coffer.Save(crypto.DeriveIdentifier(rootIdentifier, uint64(0), chunkIndex), crypto.Encrypt(data, masterKey))
 		memguard.WipeBytes(data)
 
 		// Increment counter.
@@ -69,7 +81,7 @@ func ImportData(path string, fileSize int64, rootIdentifier, masterKey *memguard
 }
 
 // ExportData exports data from coffer to the disk.
-func ExportData(path string, rootIdentifier, masterKey *memguard.LockedBuffer) {
+func ExportData(path string, fileIndex uint64, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Atempt to open the file now.
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND|os.O_CREATE|os.O_EXCL, 0666)
 	if err != nil {
@@ -85,7 +97,7 @@ func ExportData(path string, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	defer f.Close()
 
 	// Get the metadata first.
-	lenData := MetaGetLength("length", rootIdentifier, masterKey)
+	lenData := MetaGetLength("length", rootIdentifier, masterKey, fileIndex)
 
 	// Start the progress bar object.
 	bar := pb.New64(lenData).Prefix("+ Exporting ")
@@ -94,9 +106,9 @@ func ExportData(path string, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	bar.Start()
 
 	// Grab the data.
-	for n := new(uint64); true; *n++ {
+	for n := new(int64); true; *n++ {
 		// Derive derived_identifier[n]
-		ct := coffer.Retrieve(crypto.DeriveIdentifierN(rootIdentifier, *n))
+		ct := coffer.Retrieve(crypto.DeriveIdentifier(rootIdentifier, uint64(0), *n))
 		if ct == nil {
 			// This one doesn't exist. //EOF
 			break
@@ -132,16 +144,16 @@ func ExportData(path string, rootIdentifier, masterKey *memguard.LockedBuffer) {
 }
 
 // ViewData grabs the data from coffer and writes it to stdout.
-func ViewData(rootIdentifier, masterKey *memguard.LockedBuffer) {
+func ViewData(fileIndex uint64, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Get the metadata first.
-	lenData := MetaGetLength("length", rootIdentifier, masterKey)
+	lenData := MetaGetLength("length", rootIdentifier, masterKey, fileIndex)
 
 	fmt.Println("\n-----BEGIN PLAINTEXT-----")
 
 	var totalExportedBytes int64
-	for n := new(uint64); true; *n++ {
+	for n := new(int64); true; *n++ {
 		// Derive derived_identifier[n]
-		ct := coffer.Retrieve(crypto.DeriveIdentifierN(rootIdentifier, *n))
+		ct := coffer.Retrieve(crypto.DeriveIdentifier(rootIdentifier, uint64(0), *n))
 		if ct == nil {
 			// This one doesn't exist. //EOF
 			break
@@ -177,9 +189,9 @@ func ViewData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 }
 
 // RemoveData removes data from coffer.
-func RemoveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
+func RemoveData(fileIndex uint64, rootIdentifier, masterKey *memguard.LockedBuffer) {
 	// Get the metadata first.
-	lenData := MetaGetLength("length", rootIdentifier, masterKey)
+	lenData := MetaGetLength("length", rootIdentifier, masterKey, fileIndex)
 
 	// Start the progress bar.
 	bar := pb.New64(int64(math.Ceil(float64(lenData) / 4096))).Prefix("+ Removing ")
@@ -188,13 +200,13 @@ func RemoveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 	bar.Start()
 
 	// Remove all metadata.
-	MetaRemoveData(rootIdentifier)
+	MetaRemoveData(rootIdentifier, fileIndex)
 
 	// Delete all the pieces.
 	count := 0
-	for n := new(uint64); true; *n++ {
-		// Get the DeriveIdentifierN for this n.
-		derivedIdentifierN := crypto.DeriveIdentifierN(rootIdentifier, *n)
+	for n := new(int64); true; *n++ {
+		// Get the DeriveIdentifier for this n.
+		derivedIdentifierN := crypto.DeriveIdentifier(rootIdentifier, uint64(0), *n)
 
 		// Check if it exists.
 		if coffer.Exists(derivedIdentifierN) {

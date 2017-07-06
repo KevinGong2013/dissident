@@ -14,17 +14,17 @@ var (
 )
 
 // MetaSetLength sets the length field of an entry to the supplied value.
-func MetaSetLength(length int64, rootIdentifier, masterKey *memguard.LockedBuffer) {
+func MetaSetLength(length int64, rootIdentifier, masterKey *memguard.LockedBuffer, fileIndex uint64) {
 	metaObj = gabs.New()
 	metaObj.SetP(length, "length")
-	MetaSaveData(rootIdentifier, masterKey)
+	MetaSaveData(rootIdentifier, masterKey, fileIndex)
 }
 
 // MetaGetLength retrieves the length of this data and returns it.
-func MetaGetLength(path string, rootIdentifier, masterKey *memguard.LockedBuffer) int64 {
+func MetaGetLength(path string, rootIdentifier, masterKey *memguard.LockedBuffer, fileIndex uint64) int64 {
 	metaObj = gabs.New()
 
-	MetaRetrieveData(rootIdentifier, masterKey)
+	MetaRetrieveData(rootIdentifier, masterKey, fileIndex)
 
 	value := metaObj.Path(path).Data()
 	if value == nil {
@@ -36,7 +36,7 @@ func MetaGetLength(path string, rootIdentifier, masterKey *memguard.LockedBuffer
 }
 
 // MetaSaveData saves the metadata to the database.
-func MetaSaveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
+func MetaSaveData(rootIdentifier, masterKey *memguard.LockedBuffer, fileIndex uint64) {
 	// Grab the metadata as bytes.
 	data := []byte(metaObj.String())
 
@@ -58,17 +58,17 @@ func MetaSaveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 		}
 
 		// Save it to the database.
-		coffer.Save(crypto.DeriveMetaIdentifierN(rootIdentifier, -i-1), crypto.Encrypt(padded, masterKey))
+		coffer.Save(crypto.DeriveIdentifier(rootIdentifier, uint64(0), -int64(i)-1), crypto.Encrypt(padded, masterKey))
 	}
 }
 
 // MetaRetrieveData gets the metadata from the database and returns
-func MetaRetrieveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
+func MetaRetrieveData(rootIdentifier, masterKey *memguard.LockedBuffer, fileIndex uint64) {
 	// Declare variable to hold all of this metadata.
 	var data []byte
 
 	for n := -1; true; n-- {
-		ct := coffer.Retrieve(crypto.DeriveMetaIdentifierN(rootIdentifier, n))
+		ct := coffer.Retrieve(crypto.DeriveIdentifier(rootIdentifier, uint64(0), int64(n)))
 		if ct == nil {
 			// This one doesn't exist. //EOF
 			break
@@ -109,10 +109,10 @@ func MetaRetrieveData(rootIdentifier, masterKey *memguard.LockedBuffer) {
 }
 
 // MetaRemoveData deletes all the metadata related to an entry.
-func MetaRemoveData(rootIdentifier *memguard.LockedBuffer) {
+func MetaRemoveData(rootIdentifier *memguard.LockedBuffer, fileIndex uint64) {
 	for n := -1; true; n-- {
 		// Get the DeriveIdentifierN for this n.
-		derivedMetaIdentifierN := crypto.DeriveMetaIdentifierN(rootIdentifier, n)
+		derivedMetaIdentifierN := crypto.DeriveIdentifier(rootIdentifier, uint64(0), int64(n))
 
 		// Check if it exists.
 		if coffer.Exists(derivedMetaIdentifierN) {

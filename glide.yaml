@@ -4,12 +4,12 @@ license: GPL-3.0
 owners:
 - name: Awn Umar
   email: awn@cryptolosophy.io
-homepage: https://cryptolosophy.io
+  homepage: https://cryptolosophy.io
 import:
 - package: github.com/Jeffail/gabs
   version: "1.0"
 - package: github.com/awnumar/memguard
-  version: ^0.7.2
+  version: ^0.9.0
 - package: github.com/cheggaaa/pb
   version: ^1.0.15
 - package: github.com/syndtr/goleveldb
@@ -17,7 +17,4 @@ import:
   - leveldb
 - package: golang.org/x/crypto
   subpackages:
-  - blake2b
-  - nacl/secretbox
-  - scrypt
   - ssh/terminal
